@@ -2548,17 +2548,22 @@
             <span id="checkoutTotal">$0.00</span>
           </div>
         </aside>
-        <div class="checkout-form">
+        <form class="checkout-form" id="checkoutForm" name="order-form" method="POST" data-netlify="true">
+          <input type="hidden" name="form-name" value="order-form" />
+          <input type="hidden" name="collection-method" id="coCollectionMethod" />
+          <input type="hidden" name="parish" id="coParishField" />
+          <input type="hidden" name="payment-method" id="coPaymentMethod" />
+          <input type="hidden" name="order-summary" id="coOrderSummary" />
           <h2 class="checkout-title">Complete Your <em>Order</em></h2>
 
           <label class="checkout-label" for="coName">Full Name</label>
-          <input type="text" id="coName" class="checkout-input" placeholder="Your full name" autocomplete="name" />
+          <input type="text" id="coName" name="full-name" class="checkout-input" placeholder="Your full name" autocomplete="name" />
 
           <label class="checkout-label" for="coEmail">Email Address</label>
-          <input type="email" id="coEmail" class="checkout-input" placeholder="you@email.com" autocomplete="email" />
+          <input type="email" id="coEmail" name="email" class="checkout-input" placeholder="you@email.com" autocomplete="email" />
 
           <label class="checkout-label" for="coPhone">Phone Number</label>
-          <input type="tel" id="coPhone" class="checkout-input" placeholder="📞 +1 (246) 000-0000" autocomplete="tel" />
+          <input type="tel" id="coPhone" name="phone" class="checkout-input" placeholder="📞 +1 (246) 000-0000" autocomplete="tel" />
 
           <p class="checkout-label">Collection Method</p>
           <div class="method-cards">
@@ -2597,8 +2602,8 @@
           </div>
           <p class="pay-confirm" id="payConfirm"></p>
 
-          <button class="checkout-confirm" id="checkoutConfirm" disabled>Confirm Order</button>
-        </div>
+          <button type="button" class="checkout-confirm" id="checkoutConfirm" disabled>Confirm Order</button>
+        </form>
       </div>
 
       <!-- Success screen (shown after Confirm Order) -->
@@ -2629,7 +2634,9 @@
   <div class="preorder-overlay" id="preorderOverlay" role="dialog" aria-modal="true" aria-label="Pre order">
     <div class="preorder-panel">
       <button class="preorder-close" id="preorderClose" aria-label="Close pre order">&times;</button>
-      <div class="preorder-body" id="preorderBody">
+      <form class="preorder-body" id="preorderBody" name="preorder-form" method="POST" data-netlify="true">
+        <input type="hidden" name="form-name" value="preorder-form" />
+        <input type="hidden" name="product-name" id="poProductName" />
         <p class="preorder-eyebrow">✦ Pre Order</p>
         <h2 class="preorder-title"><span id="preorderProduct"></span></h2>
         <p class="preorder-note">Non-refundable deposit of <strong>$70.00</strong> required to secure your pre order.</p>
@@ -2637,14 +2644,14 @@
         <p class="preorder-firstpay">Pre orders can only be completed via FirstPay.</p>
         <img src="images/first-pay-qr-code.jpeg" alt="FirstPay QR Code" class="preorder-qr" id="preorderQR" />
         <label class="checkout-label" for="poName">Full Name</label>
-        <input type="text" id="poName" class="checkout-input" placeholder="Your full name" autocomplete="name" />
+        <input type="text" id="poName" name="full-name" class="checkout-input" placeholder="Your full name" autocomplete="name" />
         <label class="checkout-label" for="poEmail">Email Address</label>
-        <input type="email" id="poEmail" class="checkout-input" placeholder="you@email.com" autocomplete="email" />
+        <input type="email" id="poEmail" name="email" class="checkout-input" placeholder="you@email.com" autocomplete="email" />
 
         <label class="checkout-label" for="poPhone">Phone Number</label>
-        <input type="tel" id="poPhone" class="checkout-input" placeholder="📞 +1 (246) 000-0000" autocomplete="tel" />
-        <button class="preorder-confirm" id="preorderConfirm" disabled>Confirm Pre Order</button>
-      </div>
+        <input type="tel" id="poPhone" name="phone" class="checkout-input" placeholder="📞 +1 (246) 000-0000" autocomplete="tel" />
+        <button type="button" class="preorder-confirm" id="preorderConfirm" disabled>Confirm Pre Order</button>
+      </form>
       <div class="preorder-success" id="preorderSuccess">
         <div class="success-check">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -3183,6 +3190,11 @@
       const payButtons       = checkoutOverlay.querySelectorAll('.pay-btn');
       const payConfirm       = document.getElementById('payConfirm');
       const checkoutConfirm  = document.getElementById('checkoutConfirm');
+      const checkoutForm     = document.getElementById('checkoutForm');
+      const coCollectionMethod = document.getElementById('coCollectionMethod');
+      const coParishField    = document.getElementById('coParishField');
+      const coPaymentMethod  = document.getElementById('coPaymentMethod');
+      const coOrderSummary   = document.getElementById('coOrderSummary');
       const checkoutGrid     = document.getElementById('checkoutGrid');
       const checkoutSuccess  = document.getElementById('checkoutSuccess');
       const successContinue  = document.getElementById('successContinue');
@@ -3341,8 +3353,53 @@
         });
       });
 
+      /* Submit a form to Netlify via AJAX so our custom success screen still shows
+         (no page navigation). Netlify captures the submission server-side. */
+      function submitNetlifyForm(form) {
+        const body = new URLSearchParams(new FormData(form)).toString();
+        fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body
+        }).catch(() => { /* don't block the UX if the network call fails */ });
+      }
+
+      /* Build a readable order summary: every item with its size, quantity,
+         line total, plus the delivery fee and grand total. */
+      function buildOrderSummary() {
+        const lines = cart.map(item => {
+          const qty = item.qty || 1;
+          const lineTotal = fmt(parsePrice(item.price) * qty);
+          let row = `${item.name} — Qty ${qty} × ${item.price} = ${lineTotal}`;
+          if (Array.isArray(item.lines) && item.lines.length) {
+            row += ` [${item.lines.join('; ')}]`;
+          }
+          return row;
+        });
+        const subtotal = cartTotalValue();
+        const fee = (coMethod === 'Delivery' && coParish) ? coFee : 0;
+        let summary = lines.join('\n');
+        summary += `\nSubtotal: ${fmt(subtotal)}`;
+        if (fee > 0) summary += `\nDelivery Fee (${coParish}): ${fmt(fee)}`;
+        summary += `\nTotal: ${fmt(subtotal + fee)}`;
+        return summary;
+      }
+
       checkoutConfirm.addEventListener('click', () => {
         if (checkoutConfirm.disabled) return;
+
+        // Populate the hidden fields so Netlify captures the full order
+        coCollectionMethod.value = coMethod === 'Delivery'
+          ? `Delivery — ${coParish || ''}`
+          : `Collection — ${coLocation || ''}`;
+        coParishField.value   = coMethod === 'Delivery' ? (coParish || '') : '';
+        coPaymentMethod.value = coPay === 'venue'    ? 'Pay At Venue'
+                              : coPay === 'firstpay' ? 'Pay With FirstPay'
+                              : '';
+        coOrderSummary.value  = buildOrderSummary();
+
+        // Hand the submission off to Netlify before the cart is cleared
+        submitNetlifyForm(checkoutForm);
 
         // Order placed — empty the cart and reveal the animated success screen
         cart.length = 0;
@@ -3371,6 +3428,7 @@
       const poName          = document.getElementById('poName');
       const poEmail         = document.getElementById('poEmail');
       const poPhone         = document.getElementById('poPhone');
+      const poProductName   = document.getElementById('poProductName');
 
       function validatePreorder() {
         const nameOk  = poName.value.trim().length > 0;
@@ -3399,6 +3457,11 @@
 
       preorderConfirm.addEventListener('click', () => {
         if (preorderConfirm.disabled) return;
+
+        // Capture which product the pre order is for, then send it to Netlify
+        poProductName.value = preorderProduct.textContent || '';
+        submitNetlifyForm(preorderBody);
+
         preorderBody.style.display = 'none';
         preorderSuccess.classList.remove('show');
         void preorderSuccess.offsetWidth; // restart entrance animation
