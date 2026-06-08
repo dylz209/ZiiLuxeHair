@@ -889,20 +889,22 @@
       font-size: 0.84rem; line-height: 1.6; color: rgba(255,255,255,0.6);
       margin-bottom: 14px;
     }
-    .preorder-firstpay {
-      font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em;
-      color: var(--gold-lt); margin-bottom: 20px;
-    }
     .preorder-qr {
       display: block; width: 220px; height: 220px; object-fit: contain;
-      margin: 0 auto 24px; border-radius: 8px;
+      margin: 0 auto 14px; border-radius: 8px;
       background: #fff; padding: 10px;
     }
-    .preorder-overlay.open .preorder-qr { animation: qrFadeIn 0.7s ease 0.15s both; }
+    .preorder-qr.pop { animation: qrFadeIn 0.5s ease both; }
     @keyframes qrFadeIn {
       from { opacity: 0; transform: scale(0.92); }
       to   { opacity: 1; transform: scale(1); }
     }
+    /* Pre order payment detail: cash message / FirstPay QR block */
+    .preorder-pay-msg {
+      font-size: 0.84rem; line-height: 1.6; color: var(--gold-lt);
+      text-align: center; font-weight: 500; margin: 8px 0 4px;
+    }
+    .preorder-pay-msg[hidden], .preorder-firstpay-detail[hidden] { display: none; }
     .preorder-confirm {
       width: 100%; margin-top: 24px;
       background: var(--gold); color: var(--black);
@@ -2668,8 +2670,6 @@
         <h2 class="preorder-title"><span id="preorderProduct"></span></h2>
         <p class="preorder-note">Non-refundable deposit of <strong>$70.00</strong> required to secure your pre order.</p>
         <p class="preorder-sub">The remaining balance will be collected upon receiving the hair.</p>
-        <p class="preorder-firstpay">Pre orders can only be completed via FirstPay.</p>
-        <img src="images/first-pay-qr-code.jpeg" alt="FirstPay QR Code" class="preorder-qr" id="preorderQR" />
         <label class="checkout-label" for="poName">Full Name</label>
         <input type="text" id="poName" name="full-name" class="checkout-input" placeholder="Your full name" autocomplete="name" />
         <label class="checkout-label" for="poEmail">Email Address</label>
@@ -2691,6 +2691,28 @@
           <button type="button" class="pm-size" data-size='28"'>28"</button>
           <button type="button" class="pm-size" data-size='30"'>30"</button>
         </div>
+
+        <p class="checkout-label">Quantity</p>
+        <div class="pm-qty">
+          <button type="button" class="pm-qty-btn" id="poQtyMinus" aria-label="Decrease quantity">−</button>
+          <span class="pm-qty-num" id="poQtyNum">1</span>
+          <button type="button" class="pm-qty-btn" id="poQtyPlus" aria-label="Increase quantity">+</button>
+        </div>
+        <input type="hidden" name="quantity" id="poQuantity" value="1" />
+
+        <p class="checkout-label">Payment Method</p>
+        <div class="pay-options" id="poPayOptions">
+          <button type="button" class="pay-btn" data-pay="Cash">Cash</button>
+          <button type="button" class="pay-btn" data-pay="FirstPay">FirstPay</button>
+        </div>
+        <input type="hidden" name="payment-method" id="poPaymentMethod" />
+
+        <p class="preorder-pay-msg" id="poCashMsg" hidden>Please contact us to arrange your cash deposit. Call or WhatsApp +1 (246) 240-8510</p>
+        <div class="preorder-firstpay-detail" id="poFirstpayDetail" hidden>
+          <img src="images/first-pay-qr-code.jpeg" alt="FirstPay QR Code" class="preorder-qr" id="preorderQR" />
+          <p class="preorder-pay-msg">Scan the QR code to complete your $70 deposit</p>
+        </div>
+
         <button type="submit" class="preorder-confirm" id="preorderConfirm" disabled>Confirm Pre Order</button>
       </form>
       <div class="preorder-success" id="preorderSuccess">
@@ -3535,21 +3557,70 @@
       const poSizes         = document.getElementById('poSizes');
       const poSizeButtons   = poSizes.querySelectorAll('.pm-size');
       const poInchSize      = document.getElementById('poInchSize');
+      const poQtyMinus      = document.getElementById('poQtyMinus');
+      const poQtyPlus       = document.getElementById('poQtyPlus');
+      const poQtyNum        = document.getElementById('poQtyNum');
+      const poQuantity      = document.getElementById('poQuantity');
+      const poPayOptions    = document.getElementById('poPayOptions');
+      const poPayButtons    = poPayOptions.querySelectorAll('.pay-btn');
+      const poPaymentMethod = document.getElementById('poPaymentMethod');
+      const poCashMsg       = document.getElementById('poCashMsg');
+      const poFirstpayDetail= document.getElementById('poFirstpayDetail');
+      const preorderQR      = document.getElementById('preorderQR');
       let preorderSize = null;   // selected inch size, e.g. '18"'
+      let preorderQty = 1;       // pre order quantity (never below 1)
+      let preorderPay = null;    // 'Cash' | 'FirstPay'
+
+      function setPreorderQty(q) {
+        preorderQty = Math.max(1, q);
+        poQtyNum.textContent = preorderQty;
+        poQuantity.value = preorderQty;
+      }
+      poQtyMinus.addEventListener('click', () => setPreorderQty(preorderQty - 1));
+      poQtyPlus.addEventListener('click', () => setPreorderQty(preorderQty + 1));
 
       function validatePreorder() {
         const nameOk  = poName.value.trim().length > 0;
         const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(poEmail.value.trim());
         const phoneOk = poPhone.value.trim().length > 0;
         const sizeOk  = !!preorderSize;
-        preorderConfirm.disabled = !(nameOk && emailOk && phoneOk && sizeOk);
+        const payOk   = !!preorderPay;
+        preorderConfirm.disabled = !(nameOk && emailOk && phoneOk && sizeOk && payOk);
       }
+
+      // Payment method: highlight the chosen card in gold, store it for
+      // submission (name="payment-method") and reveal the matching detail.
+      poPayButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          poPayButtons.forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          preorderPay = btn.dataset.pay;
+          poPaymentMethod.value = preorderPay;
+          if (preorderPay === 'FirstPay') {
+            poCashMsg.hidden = true;
+            poFirstpayDetail.hidden = false;
+            // Restart the QR pop animation each time FirstPay is chosen
+            preorderQR.classList.remove('pop');
+            void preorderQR.offsetWidth;
+            preorderQR.classList.add('pop');
+          } else {
+            poFirstpayDetail.hidden = true;
+            poCashMsg.hidden = false;
+          }
+          validatePreorder();
+        });
+      });
 
       function openPreorder(name) {
         preorderProduct.textContent = name || 'This Product';
         poName.value = ''; poEmail.value = ''; poPhone.value = '';
         preorderSize = null; poInchSize.value = '';
         poSizeButtons.forEach(b => b.classList.remove('selected'));
+        setPreorderQty(1);
+        preorderPay = null; poPaymentMethod.value = '';
+        poPayButtons.forEach(b => b.classList.remove('selected'));
+        poCashMsg.hidden = true;
+        poFirstpayDetail.hidden = true;
         preorderConfirm.disabled = true;
         preorderSuccess.classList.remove('show');
         preorderBody.style.display = '';
