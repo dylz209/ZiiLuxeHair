@@ -2644,6 +2644,8 @@
         <input type="hidden" name="_subject" value="New ZiiLuxeHair Pre Order" />
         <input type="hidden" name="_replyto" id="poReplyTo" />
         <input type="hidden" name="product-name" id="poProductName" />
+        <input type="hidden" name="inch-size" id="poInchSize" />
+        <input type="hidden" name="deposit-amount" value="$70.00" />
         <p class="preorder-eyebrow">✦ Pre Order</p>
         <h2 class="preorder-title"><span id="preorderProduct"></span></h2>
         <p class="preorder-note">Non-refundable deposit of <strong>$70.00</strong> required to secure your pre order.</p>
@@ -2671,7 +2673,6 @@
           <button type="button" class="pm-size" data-size='28"'>28"</button>
           <button type="button" class="pm-size" data-size='30"'>30"</button>
         </div>
-        <input type="hidden" name="inch-size" id="poInchSize" />
         <button type="submit" class="preorder-confirm" id="preorderConfirm" disabled>Confirm Pre Order</button>
       </form>
       <div class="preorder-success" id="preorderSuccess">
@@ -3538,8 +3539,11 @@
         e.preventDefault();
         if (preorderConfirm.disabled) return;
 
-        // Capture which product the pre order is for
+        // Populate every dynamic field so the full pre order is captured by
+        // Netlify (name/email/phone come straight from their inputs; deposit is
+        // a static hidden field). full-name, email and phone are live inputs.
         poProductName.value = preorderProduct.textContent || '';
+        poInchSize.value    = preorderSize || '';
         poReplyTo.value      = poEmail.value.trim();
 
         preorderConfirm.disabled = true;
