@@ -2592,7 +2592,7 @@
           </div>
           <p class="pay-confirm" id="payConfirm"></p>
 
-          <button type="button" class="checkout-confirm" id="checkoutConfirm" disabled>Confirm Order</button>
+          <button type="submit" class="checkout-confirm" id="checkoutConfirm" disabled>Confirm Order</button>
         </form>
       </div>
 
@@ -2640,7 +2640,7 @@
 
         <label class="checkout-label" for="poPhone">Phone Number</label>
         <input type="tel" id="poPhone" name="phone" class="checkout-input" placeholder="📞 +1 (246) 000-0000" autocomplete="tel" />
-        <button type="button" class="preorder-confirm" id="preorderConfirm" disabled>Confirm Pre Order</button>
+        <button type="submit" class="preorder-confirm" id="preorderConfirm" disabled>Confirm Pre Order</button>
       </form>
       <div class="preorder-success" id="preorderSuccess">
         <div class="success-check">
@@ -3342,15 +3342,17 @@
         });
       });
 
-      /* Submit a form to Netlify via AJAX so our custom success screen still shows
-         (no page navigation). Netlify captures the submission server-side. */
+      /* Perform a real POST submission of the form to Netlify. We post the form's
+         own field data (URL-encoded, including the hidden form-name) to "/" so
+         Netlify detects and records it, while preventDefault keeps our animated
+         success screen on screen instead of navigating away. Returns the fetch
+         promise so callers can wait for the submission to complete. */
       function submitNetlifyForm(form) {
-        const body = new URLSearchParams(new FormData(form)).toString();
-        fetch('/', {
+        return fetch('/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body
-        }).catch(() => { /* don't block the UX if the network call fails */ });
+          body: new URLSearchParams(new FormData(form)).toString()
+        });
       }
 
       /* Build a readable order summary: every item with its size, quantity,
@@ -3374,7 +3376,22 @@
         return summary;
       }
 
-      checkoutConfirm.addEventListener('click', () => {
+      function showCheckoutSuccess() {
+        // Order placed — empty the cart and reveal the animated success screen
+        cart.length = 0;
+        renderCart();
+        closeCart();
+        checkoutGrid.style.display = 'none';
+        checkoutSuccess.classList.remove('show');
+        void checkoutSuccess.offsetWidth; // restart the entrance animation
+        checkoutSuccess.classList.add('show');
+      }
+
+      // Real HTML form submission: the form's submit event fires (button click or
+      // Enter), we stop the browser from navigating, populate the hidden fields,
+      // POST the data to Netlify, then show the "Thanks For Shopping" success screen.
+      checkoutForm.addEventListener('submit', e => {
+        e.preventDefault();
         if (checkoutConfirm.disabled) return;
 
         // Populate the hidden fields so Netlify captures the full order
@@ -3387,17 +3404,12 @@
                               : '';
         coOrderSummary.value  = buildOrderSummary();
 
-        // Hand the submission off to Netlify before the cart is cleared
-        submitNetlifyForm(checkoutForm);
-
-        // Order placed — empty the cart and reveal the animated success screen
-        cart.length = 0;
-        renderCart();
-        closeCart();
-        checkoutGrid.style.display = 'none';
-        checkoutSuccess.classList.remove('show');
-        void checkoutSuccess.offsetWidth; // restart the entrance animation
-        checkoutSuccess.classList.add('show');
+        // Real POST to Netlify, then reveal the success screen either way so a
+        // network hiccup never traps the customer on the checkout.
+        checkoutConfirm.disabled = true;
+        submitNetlifyForm(checkoutForm)
+          .catch(() => { /* submission failed — still confirm to the customer */ })
+          .finally(showCheckoutSuccess);
       });
 
       // "Continue Shopping" closes the checkout and returns to the site (cart already empty)
@@ -3444,17 +3456,26 @@
       poEmail.addEventListener('input', validatePreorder);
       poPhone.addEventListener('input', validatePreorder);
 
-      preorderConfirm.addEventListener('click', () => {
-        if (preorderConfirm.disabled) return;
-
-        // Capture which product the pre order is for, then send it to Netlify
-        poProductName.value = preorderProduct.textContent || '';
-        submitNetlifyForm(preorderBody);
-
+      function showPreorderSuccess() {
         preorderBody.style.display = 'none';
         preorderSuccess.classList.remove('show');
         void preorderSuccess.offsetWidth; // restart entrance animation
         preorderSuccess.classList.add('show');
+      }
+
+      // Real HTML form submission for the pre order: stop navigation, capture the
+      // product name, POST the data to Netlify, then show the confirmation screen.
+      preorderBody.addEventListener('submit', e => {
+        e.preventDefault();
+        if (preorderConfirm.disabled) return;
+
+        // Capture which product the pre order is for
+        poProductName.value = preorderProduct.textContent || '';
+
+        preorderConfirm.disabled = true;
+        submitNetlifyForm(preorderBody)
+          .catch(() => { /* submission failed — still confirm to the customer */ })
+          .finally(showPreorderSuccess);
       });
 
       preorderDone.addEventListener('click', closePreorder);
