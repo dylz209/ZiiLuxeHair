@@ -562,6 +562,8 @@
     .bundle-style-panel.open {
       max-height: 1600px; opacity: 1; transform: translateY(0);
     }
+    /* Single-column variant used by the 3 Bundle Deals texture selector */
+    .bundle-style-panel.single { grid-template-columns: 1fr; }
     .bundle-pieces { display: flex; flex-direction: column; gap: 16px; }
     .bundle-piece {
       background: rgba(255,255,255,0.03);
@@ -1190,17 +1192,26 @@
       background: var(--gold); color: var(--black);
       border-color: var(--gold); font-weight: 600;
     }
-    /* Sold-out size: greyed out, struck through and not selectable */
+    /* Out-of-stock size: still selectable, just muted as a subtle hint */
     .pm-size.soldout {
-      color: rgba(255,255,255,0.45);
-      border-color: rgba(255,255,255,0.14);
-      text-decoration: line-through;
-      opacity: 0.5; filter: grayscale(0.8);
-      cursor: not-allowed;
+      color: rgba(255,255,255,0.55);
+      border-color: rgba(255,255,255,0.16);
     }
     .pm-size.soldout:hover {
-      background: transparent; border-color: rgba(255,255,255,0.14);
+      border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.05);
     }
+    /* Selected out-of-stock size: muted dark-red highlight instead of gold */
+    .pm-size.selected-oos,
+    .pm-size.selected-oos:hover {
+      background: #5c2b2b; color: #f4d6d6;
+      border-color: #8c3b3b; font-weight: 600;
+    }
+    /* Small "Out of Stock" tag shown under the sizes for an out-of-stock pick */
+    .pm-oos-tag {
+      font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase;
+      color: #e0a3a3; font-weight: 600; margin: -8px 0 14px;
+    }
+    .pm-oos-tag[hidden] { display: none; }
     .pm-size-msg {
       color: #e0a3a3; font-size: 0.78rem; margin-bottom: 14px;
       opacity: 0; max-height: 0; overflow: hidden;
@@ -1929,7 +1940,7 @@
       </div>
       <div class="trust-text">
         <div class="trust-title">Versatile Products</div>
-        <div class="trust-sub">Wigs · Bundles · Frontals</div>
+        <div class="trust-sub">Wigs · Bundles · Frontals · Crochet</div>
       </div>
     </div>
     <div class="trust-item">
@@ -2131,8 +2142,14 @@
       <h3 class="deals-subtitle">3 Bundle Deals</h3>
       <p class="deals-note">Any 3 bundles of the same length.</p>
       <div class="deals-grid" id="sameLengthGrid"></div>
+      <div class="bundle-style-panel single" id="sameLengthStylePanel" hidden>
+        <div class="bundle-piece" id="sameLengthPiece">
+          <div class="bundle-piece-head">Choose Your Texture</div>
+          <div class="style-options" id="sameLengthStyleOptions"></div>
+        </div>
+      </div>
       <p class="deal-msg" id="sameLengthMsg">Please select a deal</p>
-      <button class="deal-add" id="sameLengthAdd">Add to Cart</button>
+      <button class="deal-add" id="sameLengthAdd" disabled>Add to Cart</button>
     </div>
 
     <div class="deals-block">
@@ -2498,6 +2515,7 @@
           <button class="pm-size" data-size='28"' data-price="225">28"</button>
           <button class="pm-size" data-size='30"' data-price="235">30"</button>
         </div>
+        <p class="pm-oos-tag" id="pmOosTag" hidden>Out of Stock</p>
         <p class="pm-size-label">Quantity</p>
         <div class="pm-qty">
           <button class="pm-qty-btn" id="pmQtyMinus" aria-label="Decrease quantity">−</button>
@@ -2721,6 +2739,7 @@
       const pmSizeMsg  = document.getElementById('pmSizeMsg');
       const pmAdd      = document.getElementById('pmAdd');
       const pmPreorder = document.getElementById('pmPreorder');
+      const pmOosTag   = document.getElementById('pmOosTag');
       const pmQty      = document.querySelector('.pm-qty');
       const pmQtyNum   = document.getElementById('pmQtyNum');
       const pmQtyMinus = document.getElementById('pmQtyMinus');
@@ -2728,9 +2747,8 @@
       const sizeButtons = pmSizes.querySelectorAll('.pm-size');
 
       let currentProduct = null;
-      let selectedSize = null;   // { size: '18"', price: 175 }
+      let selectedSize = null;   // { size: '18"', price: 175, oos: false }
       let quantity = 1;
-      let pmOos = false;         // is the product in the modal out of stock?
 
       /* Look up stock by product name. Falls back to a trailing-quote-stripped
          key (e.g. 'Style 26"' -> 'Style 26') and defaults to
@@ -2758,11 +2776,12 @@
 
       function resetSizes() {
         selectedSize = null;
-        sizeButtons.forEach(b => b.classList.remove('selected'));
+        sizeButtons.forEach(b => b.classList.remove('selected', 'selected-oos'));
         pmPrice.textContent = 'Select a size';
         pmPrice.classList.add('placeholder');
         pmPrice.classList.remove('pop');
         pmSizeMsg.classList.remove('show');
+        pmOosTag.hidden = true;
         quantity = 1;
         pmQtyNum.textContent = quantity;
       }
@@ -2775,33 +2794,33 @@
         quantity++; pmQtyNum.textContent = quantity;
       });
 
-      /* Toggle the modal between in-stock and out-of-stock presentation */
+      /* Tag each inch size with its stock status for this product. Every size
+         stays clickable — the per-size status simply drives which action button
+         appears once a size is picked. A size is in stock when the product is in
+         stock AND (it has no restriction list, or the list includes that size). */
       function applyModalStock(name) {
-        pmOos = !inStock(name);
-        pmSizes.classList.toggle('disabled', pmOos);
-        pmQty.classList.toggle('disabled', pmOos);
-        // When in stock, honor any per-product size restrictions: sizes not in
-        // the allowed list are marked sold out and made unselectable.
         const allowed = availableSizes[name];
+        const productInStock = inStock(name);
         sizeButtons.forEach(b => {
-          const soldOut = !pmOos && Array.isArray(allowed) && !allowed.includes(b.dataset.size);
-          b.classList.toggle('soldout', soldOut);
-          b.title = soldOut ? 'Sold Out' : '';
-          b.disabled = pmOos || soldOut;
+          const sizeOk = productInStock &&
+            (!Array.isArray(allowed) || allowed.includes(b.dataset.size));
+          b.dataset.oos = sizeOk ? '' : '1';
+          b.classList.toggle('soldout', !sizeOk); // subtle muted hint
+          b.disabled = false;                      // all sizes selectable
+          b.title = sizeOk ? '' : 'Out of Stock';
         });
-        pmQtyMinus.disabled = pmOos;
-        pmQtyPlus.disabled = pmOos;
-        if (pmOos) {
-          pmAdd.textContent = 'Out of Stock';
-          pmAdd.classList.add('oos');
-          pmAdd.disabled = true;
-          pmPreorder.classList.add('show');
-        } else {
-          pmAdd.textContent = 'Add to Cart';
-          pmAdd.classList.remove('oos');
-          pmAdd.disabled = false;
-          pmPreorder.classList.remove('show');
-        }
+        // No size picked yet → default to the regular Add to Cart button.
+        updateModalAction();
+      }
+
+      /* Show the correct action for the current selection: an in-stock (or no)
+         selection shows Add to Cart; an out-of-stock size hides it, reveals the
+         Apply For Pre Order button and the "Out of Stock" tag. */
+      function updateModalAction() {
+        const oos = !!(selectedSize && selectedSize.oos);
+        pmAdd.hidden = oos;
+        pmPreorder.classList.toggle('show', oos);
+        pmOosTag.hidden = !oos;
       }
 
       /* Per-product badge shown inside the modal (not on every product) */
@@ -2844,12 +2863,14 @@
         if (!cartOverlay.classList.contains('open')) document.body.style.overflow = '';
       }
 
-      /* Size selection */
+      /* Size selection — any size is selectable; an out-of-stock size highlights
+         dark red and switches the action to pre order, in-stock highlights gold. */
       sizeButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-          sizeButtons.forEach(b => b.classList.remove('selected'));
-          btn.classList.add('selected');
-          selectedSize = { size: btn.dataset.size, price: parseFloat(btn.dataset.price) };
+          const oos = btn.dataset.oos === '1';
+          sizeButtons.forEach(b => b.classList.remove('selected', 'selected-oos'));
+          btn.classList.add(oos ? 'selected-oos' : 'selected');
+          selectedSize = { size: btn.dataset.size, price: parseFloat(btn.dataset.price), oos };
           pmSizeMsg.classList.remove('show');
           // Update price with a smooth pop animation
           pmPrice.classList.remove('placeholder');
@@ -2857,6 +2878,7 @@
           pmPrice.classList.remove('pop');
           void pmPrice.offsetWidth; // restart animation
           pmPrice.classList.add('pop');
+          updateModalAction();
         });
       });
 
@@ -2896,7 +2918,7 @@
         openPreorder(name);
       });
       pmAdd.addEventListener('click', () => {
-        if (pmOos) return;
+        if (selectedSize && selectedSize.oos) return; // out-of-stock uses pre order
         if (!selectedSize) {
           // Subtle animated prompt
           pmSizeMsg.classList.remove('show');
@@ -3070,34 +3092,6 @@
           </div>`).join('');
       }
 
-      function setupDealGroup(grid, msgId, addId, items, makeItem) {
-        const msg = document.getElementById(msgId);
-        const addBtn = document.getElementById(addId);
-        if (!grid || !addBtn) return;
-        let selected = null;
-        grid.addEventListener('click', e => {
-          const card = e.target.closest('.deal-card');
-          if (!card) return;
-          grid.querySelectorAll('.deal-card').forEach(c => c.classList.remove('selected'));
-          card.classList.add('selected');
-          selected = items[parseInt(card.dataset.index, 10)];
-          msg.classList.remove('show');
-        });
-        addBtn.addEventListener('click', () => {
-          if (!selected) {
-            msg.classList.remove('show');
-            void msg.offsetWidth; // restart shake animation
-            msg.classList.add('show');
-            return;
-          }
-          addToCart(makeItem(selected));
-          openCart();
-        });
-      }
-
-      setupDealGroup(sameLengthGrid, 'sameLengthMsg', 'sameLengthAdd', sameLengthDeals,
-        d => ({ name: `3× ${d.size} Bundle Deal`, price: fmt(d.price), qty: 1 }));
-
       /* ---- Custom 3 Piece: combo cards + per-piece style builder ---- */
       const bundleTextures = [
         'Burmese Spiral Curly', 'Burmese Curly', 'Loose Deep Curly', 'Italian Curly', 'Body Wave',
@@ -3105,6 +3099,63 @@
         'Water Wave'
       ];
       const comboLabel = sizes => sizes.map(s => `${s}"`).join(' + ');
+
+      /* ---- 3 Bundle Deals: pick a same-length size, then one texture ---- */
+      const sameLengthMsg     = document.getElementById('sameLengthMsg');
+      const sameLengthAdd     = document.getElementById('sameLengthAdd');
+      const sameLengthPanel   = document.getElementById('sameLengthStylePanel');
+      const sameLengthPiece   = document.getElementById('sameLengthPiece');
+      const sameLengthOptions = document.getElementById('sameLengthStyleOptions');
+
+      if (sameLengthGrid && sameLengthAdd && sameLengthPanel && sameLengthOptions) {
+        let slDeal = null;       // chosen same-length size bundle
+        let slTexture = null;    // chosen texture (one for all 3 bundles)
+
+        // One texture button per option (same list as the custom builder)
+        sameLengthOptions.innerHTML = bundleTextures.map(t =>
+          `<button type="button" class="style-btn" data-texture="${t}">${t}</button>`
+        ).join('');
+
+        function updateSameLength() {
+          sameLengthAdd.disabled = !(slDeal && slTexture);
+          if (slDeal && !slTexture) {
+            sameLengthMsg.textContent = 'Now choose your texture';
+            sameLengthMsg.classList.add('show');
+          } else {
+            sameLengthMsg.classList.remove('show');
+          }
+        }
+
+        sameLengthGrid.addEventListener('click', e => {
+          const card = e.target.closest('.deal-card');
+          if (!card) return;
+          sameLengthGrid.querySelectorAll('.deal-card').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          slDeal = sameLengthDeals[parseInt(card.dataset.index, 10)];
+          // Reveal the texture selector with the same slide-in as the custom panel
+          sameLengthPanel.hidden = false;
+          sameLengthPanel.classList.remove('open');
+          void sameLengthPanel.offsetWidth; // restart reveal animation
+          sameLengthPanel.classList.add('open');
+          updateSameLength();
+        });
+
+        sameLengthOptions.addEventListener('click', e => {
+          const btn = e.target.closest('.style-btn');
+          if (!btn) return;
+          sameLengthOptions.querySelectorAll('.style-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          slTexture = btn.dataset.texture;
+          sameLengthPiece.classList.add('filled');
+          updateSameLength();
+        });
+
+        sameLengthAdd.addEventListener('click', () => {
+          if (!slDeal || !slTexture) return;
+          addToCart({ name: `3× ${slDeal.size} ${slTexture} Bundle Deal`, price: fmt(slDeal.price), qty: 1 });
+          openCart();
+        });
+      }
 
       const customGrid       = document.getElementById('customGrid');
       const stylePanel       = document.getElementById('bundleStylePanel');
