@@ -2657,6 +2657,21 @@
 
         <label class="checkout-label" for="poPhone">Phone Number</label>
         <input type="tel" id="poPhone" name="phone" class="checkout-input" placeholder="📞 +1 (246) 000-0000" autocomplete="tel" />
+
+        <p class="checkout-label">Select Inch Size</p>
+        <div class="pm-sizes" id="poSizes">
+          <button type="button" class="pm-size" data-size='12"'>12"</button>
+          <button type="button" class="pm-size" data-size='14"'>14"</button>
+          <button type="button" class="pm-size" data-size='16"'>16"</button>
+          <button type="button" class="pm-size" data-size='18"'>18"</button>
+          <button type="button" class="pm-size" data-size='20"'>20"</button>
+          <button type="button" class="pm-size" data-size='22"'>22"</button>
+          <button type="button" class="pm-size" data-size='24"'>24"</button>
+          <button type="button" class="pm-size" data-size='26"'>26"</button>
+          <button type="button" class="pm-size" data-size='28"'>28"</button>
+          <button type="button" class="pm-size" data-size='30"'>30"</button>
+        </div>
+        <input type="hidden" name="inch-size" id="poInchSize" />
         <button type="submit" class="preorder-confirm" id="preorderConfirm" disabled>Confirm Pre Order</button>
       </form>
       <div class="preorder-success" id="preorderSuccess">
@@ -3465,17 +3480,24 @@
       const poPhone         = document.getElementById('poPhone');
       const poReplyTo       = document.getElementById('poReplyTo');
       const poProductName   = document.getElementById('poProductName');
+      const poSizes         = document.getElementById('poSizes');
+      const poSizeButtons   = poSizes.querySelectorAll('.pm-size');
+      const poInchSize      = document.getElementById('poInchSize');
+      let preorderSize = null;   // selected inch size, e.g. '18"'
 
       function validatePreorder() {
         const nameOk  = poName.value.trim().length > 0;
         const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(poEmail.value.trim());
         const phoneOk = poPhone.value.trim().length > 0;
-        preorderConfirm.disabled = !(nameOk && emailOk && phoneOk);
+        const sizeOk  = !!preorderSize;
+        preorderConfirm.disabled = !(nameOk && emailOk && phoneOk && sizeOk);
       }
 
       function openPreorder(name) {
         preorderProduct.textContent = name || 'This Product';
         poName.value = ''; poEmail.value = ''; poPhone.value = '';
+        preorderSize = null; poInchSize.value = '';
+        poSizeButtons.forEach(b => b.classList.remove('selected'));
         preorderConfirm.disabled = true;
         preorderSuccess.classList.remove('show');
         preorderBody.style.display = '';
@@ -3490,6 +3512,18 @@
       poName.addEventListener('input', validatePreorder);
       poEmail.addEventListener('input', validatePreorder);
       poPhone.addEventListener('input', validatePreorder);
+
+      // Inch size selector: highlight the chosen size in gold and store it for
+      // submission (name="inch-size"). A size is required to enable Confirm.
+      poSizeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          poSizeButtons.forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          preorderSize = btn.dataset.size;
+          poInchSize.value = preorderSize;
+          validatePreorder();
+        });
+      });
 
       function showPreorderSuccess() {
         preorderBody.style.display = 'none';
