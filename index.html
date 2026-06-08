@@ -1190,6 +1190,17 @@
       background: var(--gold); color: var(--black);
       border-color: var(--gold); font-weight: 600;
     }
+    /* Sold-out size: greyed out, struck through and not selectable */
+    .pm-size.soldout {
+      color: rgba(255,255,255,0.45);
+      border-color: rgba(255,255,255,0.14);
+      text-decoration: line-through;
+      opacity: 0.5; filter: grayscale(0.8);
+      cursor: not-allowed;
+    }
+    .pm-size.soldout:hover {
+      background: transparent; border-color: rgba(255,255,255,0.14);
+    }
     .pm-size-msg {
       color: #e0a3a3; font-size: 0.78rem; margin-bottom: 14px;
       opacity: 0; max-height: 0; overflow: hidden;
@@ -2667,14 +2678,14 @@
        Set a product to false to show its "Out of Stock" badge and enable
        the Pre Order flow on its product card + modal. */
     const inventory = {
-      "Burmese Spiral Curly": true,
+      "Burmese Spiral Curly": false,
       "Burmese Curly": true,
-      "Loose Deep Curly": true,
-      "Italian Curly": true,
-      "Body Wave": true,
-      "Straight Bundle": true,
-      "Kinky Curly": true,
-      "Water Wave": true
+      "Loose Deep Curly": false,
+      "Italian Curly": false,
+      "Body Wave": false,
+      "Straight Bundle": false,
+      "Kinky Curly": false,
+      "Water Wave": false
     };
   </script>
 
@@ -2753,7 +2764,15 @@
         pmOos = !inStock(name);
         pmSizes.classList.toggle('disabled', pmOos);
         pmQty.classList.toggle('disabled', pmOos);
-        sizeButtons.forEach(b => b.disabled = pmOos);
+        // When in stock, honor any per-product size restrictions: sizes not in
+        // the allowed list are marked sold out and made unselectable.
+        const allowed = availableSizes[name];
+        sizeButtons.forEach(b => {
+          const soldOut = !pmOos && Array.isArray(allowed) && !allowed.includes(b.dataset.size);
+          b.classList.toggle('soldout', soldOut);
+          b.title = soldOut ? 'Sold Out' : '';
+          b.disabled = pmOos || soldOut;
+        });
         pmQtyMinus.disabled = pmOos;
         pmQtyPlus.disabled = pmOos;
         if (pmOos) {
@@ -2773,6 +2792,13 @@
       const modalBadges = {
         'Burmese Curly':    { text: '✦ Bestseller', cls: 'gold' },
         'Loose Deep Curly': { text: '✦ Top Pick',   cls: 'dark' }
+      };
+
+      /* Per-product size availability. If a product is listed here, only the
+         sizes in its array are selectable; every other size is shown as sold
+         out (greyed + struck through). Products not listed keep all sizes. */
+      const availableSizes = {
+        'Burmese Curly': ['12"', '14"']
       };
 
       function openModal(card) {
