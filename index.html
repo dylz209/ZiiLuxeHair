@@ -2540,6 +2540,9 @@
         </aside>
         <form class="checkout-form" id="checkoutForm" name="order-form" method="POST" data-netlify="true">
           <input type="hidden" name="form-name" value="order-form" />
+          <input type="hidden" name="recipient-email" value="zadylynch@gmail.com" />
+          <input type="hidden" name="_subject" value="New ZiiLuxeHair Order" />
+          <input type="hidden" name="_replyto" id="coReplyTo" />
           <input type="hidden" name="collection-method" id="coCollectionMethod" />
           <input type="hidden" name="parish" id="coParishField" />
           <input type="hidden" name="payment-method" id="coPaymentMethod" />
@@ -2626,6 +2629,9 @@
       <button class="preorder-close" id="preorderClose" aria-label="Close pre order">&times;</button>
       <form class="preorder-body" id="preorderBody" name="preorder-form" method="POST" data-netlify="true">
         <input type="hidden" name="form-name" value="preorder-form" />
+        <input type="hidden" name="recipient-email" value="zadylynch@gmail.com" />
+        <input type="hidden" name="_subject" value="New ZiiLuxeHair Pre Order" />
+        <input type="hidden" name="_replyto" id="poReplyTo" />
         <input type="hidden" name="product-name" id="poProductName" />
         <p class="preorder-eyebrow">✦ Pre Order</p>
         <h2 class="preorder-title"><span id="preorderProduct"></span></h2>
@@ -3184,6 +3190,7 @@
       const coParishField    = document.getElementById('coParishField');
       const coPaymentMethod  = document.getElementById('coPaymentMethod');
       const coOrderSummary   = document.getElementById('coOrderSummary');
+      const coReplyTo        = document.getElementById('coReplyTo');
       const checkoutGrid     = document.getElementById('checkoutGrid');
       const checkoutSuccess  = document.getElementById('checkoutSuccess');
       const successContinue  = document.getElementById('successContinue');
@@ -3395,6 +3402,7 @@
         if (checkoutConfirm.disabled) return;
 
         // Populate the hidden fields so Netlify captures the full order
+        coReplyTo.value       = coEmail.value.trim();
         coCollectionMethod.value = coMethod === 'Delivery'
           ? `Delivery — ${coParish || ''}`
           : `Collection — ${coLocation || ''}`;
@@ -3429,6 +3437,7 @@
       const poName          = document.getElementById('poName');
       const poEmail         = document.getElementById('poEmail');
       const poPhone         = document.getElementById('poPhone');
+      const poReplyTo       = document.getElementById('poReplyTo');
       const poProductName   = document.getElementById('poProductName');
 
       function validatePreorder() {
@@ -3471,6 +3480,7 @@
 
         // Capture which product the pre order is for
         poProductName.value = preorderProduct.textContent || '';
+        poReplyTo.value      = poEmail.value.trim();
 
         preorderConfirm.disabled = true;
         submitNetlifyForm(preorderBody)
