@@ -462,6 +462,160 @@
     }
     .shop.open { display: block; }
 
+    /* ── VERSATILE PRODUCTS SECTION ── */
+    .versatile {
+      padding: 110px 6%;
+      background: var(--white);
+      display: none;
+    }
+    .versatile.open { display: block; }
+    .versatile .bestsellers-header { justify-content: center; text-align: center; }
+    .vp-tabs {
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 12px; margin-bottom: 56px;
+    }
+    .vp-tab {
+      font-family: var(--ff-body);
+      font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 13px 26px; border-radius: 100px;
+      border: 1px solid rgba(0,0,0,0.15);
+      background: transparent; color: var(--black);
+      cursor: pointer; transition: background 0.25s, color 0.25s, border-color 0.25s;
+    }
+    .vp-tab:hover { border-color: var(--gold-dk); color: var(--gold-dk); }
+    .vp-tab.active {
+      background: var(--black); color: var(--gold);
+      border-color: var(--black);
+    }
+    .vp-panel { display: none; }
+    .vp-panel.active { display: block; animation: dealsIn 0.5s ease; }
+    .vp-coming-soon {
+      background: var(--black);
+      border: 1px solid var(--gold);
+      border-radius: 14px;
+      padding: 90px 40px; text-align: center;
+      max-width: 720px; margin: 0 auto;
+    }
+    .vp-coming-soon .section-eyebrow { color: var(--gold-lt); }
+    .vp-cs-title {
+      font-family: var(--ff-display);
+      font-size: clamp(2rem, 5vw, 3rem);
+      color: var(--white); margin: 14px 0 16px;
+    }
+    .vp-cs-title em { font-style: italic; color: var(--gold); }
+    .vp-cs-sub {
+      color: rgba(255,255,255,0.55); font-size: 0.92rem;
+      max-width: 420px; margin: 0 auto; line-height: 1.7;
+    }
+    /* Category groupings within a Versatile panel (e.g. Wigs) */
+    .vp-category + .vp-category { margin-top: 56px; }
+    .vp-category .section-eyebrow {
+      color: var(--gold-dk); margin-bottom: 22px;
+    }
+
+    /* ── TEXT-BASED WIG CARDS ── */
+    .wig-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    .wig-card {
+      position: relative;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      min-height: 240px;
+      padding: 38px 30px;
+      background: #0d0d0d;
+      border: 1px solid rgba(201,168,76,0.26);
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+    }
+    /* Subtle gold top accent line */
+    .wig-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0.55;
+      transition: opacity 0.4s ease;
+    }
+    .wig-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--gold);
+      box-shadow: 0 22px 55px rgba(0,0,0,0.55), 0 0 22px rgba(201,168,76,0.22);
+    }
+    .wig-card:hover::before { opacity: 1; }
+    .wig-card-cat {
+      font-size: 0.6rem; font-weight: 600;
+      letter-spacing: 0.24em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 18px;
+    }
+    .wig-card .product-name {
+      font-family: var(--ff-display);
+      font-size: 1.55rem; font-weight: 500; line-height: 1.25;
+      color: #fff; margin: 0 0 22px;
+    }
+    .wig-card-divider {
+      display: block; width: 46px; height: 1px;
+      background: linear-gradient(90deg, var(--gold), rgba(201,168,76,0.12));
+      margin-bottom: 22px;
+      transition: width 0.4s ease;
+    }
+    .wig-card:hover .wig-card-divider { width: 72px; }
+    .wig-card-price {
+      font-family: var(--ff-display);
+      font-size: 1.12rem; font-weight: 500; font-style: italic;
+      color: var(--gold-lt);
+    }
+    .wig-card-contact {
+      display: inline-block; width: fit-content;
+      margin-top: 12px;
+      font-size: 0.72rem; font-style: italic;
+      letter-spacing: 0.02em;
+      color: rgba(201,168,76,0.6);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .wig-card-contact:hover {
+      color: var(--gold-lt); text-decoration: underline;
+    }
+    @media (max-width: 900px) {
+      .wig-grid { grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    }
+    @media (max-width: 560px) {
+      .wig-card { min-height: 200px; padding: 30px 24px; }
+      .wig-card .product-name { font-size: 1.35rem; }
+    }
+    /* Group sub-headings within Frontals & Closures (Closures / Frontals) */
+    .fc-group-label {
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.24em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 20px;
+    }
+    .wig-grid + .fc-group-label { margin-top: 48px; }
+
+    /* ── VIRGIN HAIR DEALS (dark panel reusing the Deals styles) ── */
+    .vh-deals {
+      margin-top: 64px;
+      padding: 56px 5%;
+      background: var(--black);
+      color: var(--white);
+      border: 1px solid rgba(201,168,76,0.28);
+      border-radius: 16px;
+    }
+    .vh-deals-header { text-align: center; margin-bottom: 44px; }
+    .vh-deals-header .section-eyebrow { color: var(--gold-lt); margin-bottom: 12px; }
+    .vh-deals-header .section-title { color: var(--white); }
+    .vh-deals-header .deals-intro { color: rgba(255,255,255,0.55); font-size: 0.9rem; margin-top: 14px; }
+    .vh-deals .deals-block { margin-bottom: 56px; }
+    .vh-deals .deals-block:last-child { margin-bottom: 0; }
+    #virginBundleTotal.pop { animation: bsPop 0.35s ease; }
+    @media (max-width: 560px) {
+      .vh-deals { padding: 40px 5%; }
+    }
+
     /* ── DEALS SECTION ── */
     .deals {
       padding: 110px 6%;
@@ -1151,6 +1305,13 @@
     .pm-eyebrow.show { display: inline-block; }
     .pm-eyebrow.gold { background: var(--gold); color: var(--black); }
     .pm-eyebrow.dark { background: var(--black); color: var(--white); border: 1px solid rgba(201,168,76,0.5); }
+    .pm-collection {
+      display: none;
+      font-size: 0.62rem; font-weight: 600;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--gold-lt); margin-bottom: 10px;
+    }
+    .pm-collection.show { display: block; }
     .pm-name {
       font-family: var(--ff-display);
       font-size: 1.9rem; font-weight: 500;
@@ -1770,9 +1931,9 @@
     /* ── MOBILE LAYOUT OVERHAUL ── */
     @media (max-width: 600px) {
       /* Comfortable section spacing */
-      .bestsellers, .shop, .deals, .how-it-works, .marble-banner,
+      .bestsellers, .shop, .deals, .versatile, .how-it-works, .marble-banner,
       .reviews, .cta-section, footer { padding-left: 6%; padding-right: 6%; }
-      .bestsellers, .shop, .deals, .how-it-works, .reviews, .cta-section { padding-top: 64px; padding-bottom: 64px; }
+      .bestsellers, .shop, .deals, .versatile, .how-it-works, .reviews, .cta-section { padding-top: 64px; padding-bottom: 64px; }
       .marble-banner { padding-top: 70px; padding-bottom: 70px; }
 
       /* Hero */
@@ -1896,6 +2057,7 @@
       <li><a href="#">Home</a></li>
       <li><a href="#shop" id="navShopLink">Shop</a></li>
       <li><a href="#deals" id="navDealsLink">Deals</a></li>
+      <li><a href="#versatile" id="navVersatileLink">Versatile Products</a></li>
       <li><a href="#our-story">About</a></li>
       <li><a href="https://mail.google.com/mail/?view=cm&to=zadylynch@gmail.com" target="_blank">Contact</a></li>
     </ul>
@@ -2174,6 +2336,313 @@
     </div>
   </section>
 
+  <!-- Versatile Products -->
+  <section class="versatile" id="versatile">
+    <div class="bestsellers-header">
+      <div>
+        <p class="section-eyebrow reveal">✦ Explore More</p>
+        <h2 class="section-title reveal reveal-d1">Versatile <em>Products</em></h2>
+      </div>
+    </div>
+
+    <div class="vp-tabs" id="vpTabs">
+      <button class="vp-tab active" data-panel="vpVirgin">Virgin Hair</button>
+      <button class="vp-tab" data-panel="vpWigs">Wigs</button>
+      <button class="vp-tab" data-panel="vpFrontals">Frontals &amp; Closures</button>
+      <button class="vp-tab" data-panel="vpCrochet">Crochet</button>
+    </div>
+
+    <!-- Virgin Hair -->
+    <div class="vp-panel active" id="vpVirgin">
+      <div class="products-grid">
+        <div class="product-card reveal" data-collection="Virgin Hair">
+          <div class="product-img-wrap" style="background:#ffffff;">
+            <img src="images/burmese-curly.jpeg" alt="Burmese Curly" style="width:100%;height:100%;object-fit:contain;" />
+            <button class="product-add">Add to Cart</button>
+          </div>
+          <p class="product-name">Burmese Curly</p>
+          <div class="product-meta">
+            <span class="product-rating">★★★★★</span>
+          </div>
+        </div>
+        <div class="product-card reveal reveal-d1" data-collection="Virgin Hair">
+          <div class="product-img-wrap" style="background:#ffffff;">
+            <span class="product-badge gold">Bestseller</span>
+            <img src="images/burmese-spiral-curly.jpeg" alt="Burmese Spiral Curly" />
+            <button class="product-add">Add to Cart</button>
+          </div>
+          <p class="product-name">Burmese Spiral Curly</p>
+          <div class="product-meta">
+            <span class="product-rating">★★★★★</span>
+          </div>
+        </div>
+        <div class="product-card reveal reveal-d2" data-collection="Virgin Hair">
+          <div class="product-img-wrap">
+            <img src="images/italian-curly.jpeg" alt="Italian Curly" />
+            <button class="product-add">Add to Cart</button>
+          </div>
+          <p class="product-name">Italian Curly</p>
+          <div class="product-meta">
+            <span class="product-rating">★★★★★</span>
+          </div>
+        </div>
+        <div class="product-card reveal reveal-d3" data-collection="Virgin Hair">
+          <div class="product-img-wrap">
+            <img src="images/body-wave.jpeg" alt="Body Wave" />
+            <button class="product-add">Add to Cart</button>
+          </div>
+          <p class="product-name">Body Wave</p>
+          <div class="product-meta">
+            <span class="product-rating">★★★★☆</span>
+          </div>
+        </div>
+        <div class="product-card reveal" data-collection="Virgin Hair">
+          <div class="product-img-wrap">
+            <img src="images/straight-bundle.jpeg" alt="Straight Bundle" />
+            <button class="product-add">Add to Cart</button>
+          </div>
+          <p class="product-name">Straight Bundle</p>
+          <div class="product-meta">
+            <span class="product-rating">★★★★★</span>
+          </div>
+        </div>
+        <div class="product-card reveal reveal-d1" data-collection="Virgin Hair">
+          <div class="product-img-wrap">
+            <img src="images/kinky-curly.jpeg" alt="Kinky Curly" />
+            <button class="product-add">Add to Cart</button>
+          </div>
+          <p class="product-name">Kinky Curly</p>
+          <div class="product-meta">
+            <span class="product-rating">★★★★★</span>
+          </div>
+        </div>
+        <div class="product-card reveal reveal-d2" data-collection="Virgin Hair">
+          <div class="product-img-wrap" style="background:#ffffff;">
+            <span class="product-badge">Top Pick</span>
+            <img src="images/deep-curly.jpeg" alt="Loose Deep Curly" style="width:100%;height:100%;object-fit:contain;" />
+            <button class="product-add">Add to Cart</button>
+          </div>
+          <p class="product-name">Loose Deep Curly</p>
+          <div class="product-meta">
+            <span class="product-rating">★★★★★</span>
+          </div>
+        </div>
+        <div class="product-card reveal reveal-d3" data-collection="Virgin Hair">
+          <div class="product-img-wrap" style="background:#ffffff;">
+            <img src="images/water-wave.jpeg" alt="Water Wave" style="width:100%;height:100%;object-fit:contain;" />
+            <button class="product-add">Add to Cart</button>
+          </div>
+          <p class="product-name">Water Wave</p>
+          <div class="product-meta">
+            <span class="product-rating">★★★★★</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Virgin Hair Deals -->
+      <div class="vh-deals reveal">
+        <div class="vh-deals-header">
+          <p class="section-eyebrow">✦ Virgin Hair Exclusive</p>
+          <h2 class="section-title">Virgin Hair <em>Deals</em></h2>
+          <p class="deals-intro">Mix, match, and save on our premium virgin hair bundles.</p>
+        </div>
+
+        <div class="deals-block">
+          <h3 class="deals-subtitle">Virgin 3 Bundle Deals</h3>
+          <p class="deals-note">Any 3 virgin hair bundles of the same length.</p>
+          <div class="deals-grid" id="virginSameLengthGrid"></div>
+          <div class="bundle-style-panel single" id="virginSameLengthStylePanel" hidden>
+            <div class="bundle-piece" id="virginSameLengthPiece">
+              <div class="bundle-piece-head">Choose Your Texture</div>
+              <div class="style-options" id="virginSameLengthStyleOptions"></div>
+            </div>
+          </div>
+          <p class="deal-msg" id="virginSameLengthMsg">Please select a deal</p>
+          <button class="deal-add" id="virginSameLengthAdd" disabled>Add to Cart</button>
+        </div>
+
+        <div class="deals-block">
+          <h3 class="deals-subtitle">Virgin Custom 3 Bundle Deals</h3>
+          <p class="deals-note">Pick a size combo, then choose a texture for each of your three pieces.</p>
+          <div class="deals-grid" id="virginCustomGrid"></div>
+          <div class="bundle-style-panel" id="virginBundleStylePanel" hidden>
+            <div class="bundle-pieces" id="virginBundlePieces"></div>
+            <div class="bundle-summary">
+              <p class="bundle-summary-title">Your Bundle</p>
+              <ul class="bundle-summary-list" id="virginBundleSummaryList"></ul>
+              <div class="bundle-summary-total">
+                <span>Total</span>
+                <span id="virginBundleTotal">—</span>
+              </div>
+              <p class="bundle-hint" id="virginBundleHint">Choose a texture for each of your 3 pieces.</p>
+              <button class="deal-add bundle-add" id="virginCustomAdd" disabled>Add to Cart</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wigs -->
+    <div class="vp-panel" id="vpWigs">
+      <!-- Premium Half Wigs -->
+      <div class="vp-category">
+        <p class="section-eyebrow reveal">✦ Premium Half Wigs</p>
+        <div class="wig-grid">
+          <div class="product-card wig-card reveal" data-collection="Wigs" data-pricing="WigsPremium">
+            <span class="wig-card-cat">Premium Half Wig</span>
+            <h3 class="product-name wig-card-name">Burmese Curly Half Wig</h3>
+            <span class="wig-card-divider"></span>
+            <span class="wig-card-price">From $255</span>
+            <a class="wig-card-contact" href="https://mail.google.com/mail/?view=cm&to=zadylynch@gmail.com" target="_blank" rel="noopener" onclick="event.stopPropagation()">Contact us for more information on how it looks</a>
+          </div>
+          <div class="product-card wig-card reveal reveal-d1" data-collection="Wigs" data-pricing="WigsPremium">
+            <span class="wig-card-cat">Premium Half Wig</span>
+            <h3 class="product-name wig-card-name">Burmese Spiral Curly Half Wig</h3>
+            <span class="wig-card-divider"></span>
+            <span class="wig-card-price">From $255</span>
+            <a class="wig-card-contact" href="https://mail.google.com/mail/?view=cm&to=zadylynch@gmail.com" target="_blank" rel="noopener" onclick="event.stopPropagation()">Contact us for more information on how it looks</a>
+          </div>
+          <div class="product-card wig-card reveal reveal-d2" data-collection="Wigs" data-pricing="WigsPremium">
+            <span class="wig-card-cat">Premium Half Wig</span>
+            <h3 class="product-name wig-card-name">Body Wave Half Wig</h3>
+            <span class="wig-card-divider"></span>
+            <span class="wig-card-price">From $255</span>
+            <a class="wig-card-contact" href="https://mail.google.com/mail/?view=cm&to=zadylynch@gmail.com" target="_blank" rel="noopener" onclick="event.stopPropagation()">Contact us for more information on how it looks</a>
+          </div>
+          <div class="product-card wig-card reveal reveal-d3" data-collection="Wigs" data-pricing="WigsPremium">
+            <span class="wig-card-cat">Premium Half Wig</span>
+            <h3 class="product-name wig-card-name">U Part Wig</h3>
+            <span class="wig-card-divider"></span>
+            <span class="wig-card-price">From $255</span>
+            <a class="wig-card-contact" href="https://mail.google.com/mail/?view=cm&to=zadylynch@gmail.com" target="_blank" rel="noopener" onclick="event.stopPropagation()">Contact us for more information on how it looks</a>
+          </div>
+          <div class="product-card wig-card reveal" data-collection="Wigs" data-pricing="WigsPremium">
+            <span class="wig-card-cat">Premium Half Wig</span>
+            <h3 class="product-name wig-card-name">V Part Wig</h3>
+            <span class="wig-card-divider"></span>
+            <span class="wig-card-price">From $255</span>
+            <a class="wig-card-contact" href="https://mail.google.com/mail/?view=cm&to=zadylynch@gmail.com" target="_blank" rel="noopener" onclick="event.stopPropagation()">Contact us for more information on how it looks</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Classic Half Wigs -->
+      <div class="vp-category">
+        <p class="section-eyebrow reveal">✦ Classic Half Wigs</p>
+        <div class="wig-grid">
+          <div class="product-card wig-card reveal" data-collection="Wigs" data-pricing="WigsClassic">
+            <span class="wig-card-cat">Classic Half Wig</span>
+            <h3 class="product-name wig-card-name">Kinky Curly Half Wig</h3>
+            <span class="wig-card-divider"></span>
+            <span class="wig-card-price">From $145</span>
+            <a class="wig-card-contact" href="https://mail.google.com/mail/?view=cm&to=zadylynch@gmail.com" target="_blank" rel="noopener" onclick="event.stopPropagation()">Contact us for more information on how it looks</a>
+          </div>
+          <div class="product-card wig-card reveal reveal-d1" data-collection="Wigs" data-pricing="WigsClassic">
+            <span class="wig-card-cat">Classic Half Wig</span>
+            <h3 class="product-name wig-card-name">Water Wave Half Wig</h3>
+            <span class="wig-card-divider"></span>
+            <span class="wig-card-price">From $145</span>
+            <a class="wig-card-contact" href="https://mail.google.com/mail/?view=cm&to=zadylynch@gmail.com" target="_blank" rel="noopener" onclick="event.stopPropagation()">Contact us for more information on how it looks</a>
+          </div>
+          <div class="product-card wig-card reveal reveal-d2" data-collection="Wigs" data-pricing="WigsClassic">
+            <span class="wig-card-cat">Classic Half Wig</span>
+            <h3 class="product-name wig-card-name">Straight Half Wig</h3>
+            <span class="wig-card-divider"></span>
+            <span class="wig-card-price">From $145</span>
+            <a class="wig-card-contact" href="https://mail.google.com/mail/?view=cm&to=zadylynch@gmail.com" target="_blank" rel="noopener" onclick="event.stopPropagation()">Contact us for more information on how it looks</a>
+          </div>
+          <div class="product-card wig-card reveal reveal-d3" data-collection="Wigs" data-pricing="WigsClassic">
+            <span class="wig-card-cat">Classic Half Wig</span>
+            <h3 class="product-name wig-card-name">Loose Deep Wave Half Wig</h3>
+            <span class="wig-card-divider"></span>
+            <span class="wig-card-price">From $145</span>
+            <a class="wig-card-contact" href="https://mail.google.com/mail/?view=cm&to=zadylynch@gmail.com" target="_blank" rel="noopener" onclick="event.stopPropagation()">Contact us for more information on how it looks</a>
+          </div>
+          <div class="product-card wig-card reveal" data-collection="Wigs" data-pricing="WigsClassic">
+            <span class="wig-card-cat">Classic Half Wig</span>
+            <h3 class="product-name wig-card-name">Deep Curly Half Wig</h3>
+            <span class="wig-card-divider"></span>
+            <span class="wig-card-price">From $145</span>
+            <a class="wig-card-contact" href="https://mail.google.com/mail/?view=cm&to=zadylynch@gmail.com" target="_blank" rel="noopener" onclick="event.stopPropagation()">Contact us for more information on how it looks</a>
+          </div>
+          <div class="product-card wig-card reveal reveal-d1" data-collection="Wigs" data-pricing="WigsClassic">
+            <span class="wig-card-cat">Classic Half Wig</span>
+            <h3 class="product-name wig-card-name">Italian Curly Half Wig</h3>
+            <span class="wig-card-divider"></span>
+            <span class="wig-card-price">From $145</span>
+            <a class="wig-card-contact" href="https://mail.google.com/mail/?view=cm&to=zadylynch@gmail.com" target="_blank" rel="noopener" onclick="event.stopPropagation()">Contact us for more information on how it looks</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Frontals & Closures -->
+    <div class="vp-panel" id="vpFrontals">
+      <div class="vp-category">
+        <p class="section-eyebrow reveal">✦ Frontals &amp; Closures</p>
+
+        <p class="fc-group-label reveal">Closures</p>
+        <div class="wig-grid">
+          <div class="product-card wig-card reveal" data-collection="Frontals &amp; Closures" data-pricing="Closure2x6">
+            <span class="wig-card-cat">Closure</span>
+            <h3 class="product-name wig-card-name">2x6 Closure</h3>
+            <span class="wig-card-divider"></span>
+            <span class="wig-card-price">From $145</span>
+            <a class="wig-card-contact" href="https://mail.google.com/mail/?view=cm&to=zadylynch@gmail.com" target="_blank" rel="noopener" onclick="event.stopPropagation()">Contact us for more information on how it looks</a>
+          </div>
+          <div class="product-card wig-card reveal reveal-d1" data-collection="Frontals &amp; Closures" data-pricing="Closure4x4">
+            <span class="wig-card-cat">Closure</span>
+            <h3 class="product-name wig-card-name">4x4 Closure</h3>
+            <span class="wig-card-divider"></span>
+            <span class="wig-card-price">From $125</span>
+            <a class="wig-card-contact" href="https://mail.google.com/mail/?view=cm&to=zadylynch@gmail.com" target="_blank" rel="noopener" onclick="event.stopPropagation()">Contact us for more information on how it looks</a>
+          </div>
+          <div class="product-card wig-card reveal reveal-d2" data-collection="Frontals &amp; Closures" data-pricing="Closure5x5">
+            <span class="wig-card-cat">Closure</span>
+            <h3 class="product-name wig-card-name">5x5 Closure</h3>
+            <span class="wig-card-divider"></span>
+            <span class="wig-card-price">From $165</span>
+            <a class="wig-card-contact" href="https://mail.google.com/mail/?view=cm&to=zadylynch@gmail.com" target="_blank" rel="noopener" onclick="event.stopPropagation()">Contact us for more information on how it looks</a>
+          </div>
+          <div class="product-card wig-card reveal reveal-d3" data-collection="Frontals &amp; Closures" data-pricing="Closure6x6">
+            <span class="wig-card-cat">Closure</span>
+            <h3 class="product-name wig-card-name">6x6 Closure</h3>
+            <span class="wig-card-divider"></span>
+            <span class="wig-card-price">From $195</span>
+            <a class="wig-card-contact" href="https://mail.google.com/mail/?view=cm&to=zadylynch@gmail.com" target="_blank" rel="noopener" onclick="event.stopPropagation()">Contact us for more information on how it looks</a>
+          </div>
+        </div>
+
+        <p class="fc-group-label reveal">Frontals</p>
+        <div class="wig-grid">
+          <div class="product-card wig-card reveal" data-collection="Frontals &amp; Closures" data-pricing="Frontal13x4">
+            <span class="wig-card-cat">Frontal</span>
+            <h3 class="product-name wig-card-name">13x4 Frontal</h3>
+            <span class="wig-card-divider"></span>
+            <span class="wig-card-price">From $205</span>
+            <a class="wig-card-contact" href="https://mail.google.com/mail/?view=cm&to=zadylynch@gmail.com" target="_blank" rel="noopener" onclick="event.stopPropagation()">Contact us for more information on how it looks</a>
+          </div>
+          <div class="product-card wig-card reveal reveal-d1" data-collection="Frontals &amp; Closures" data-pricing="Frontal13x6">
+            <span class="wig-card-cat">Frontal</span>
+            <h3 class="product-name wig-card-name">13x6 Frontal</h3>
+            <span class="wig-card-divider"></span>
+            <span class="wig-card-price">From $255</span>
+            <a class="wig-card-contact" href="https://mail.google.com/mail/?view=cm&to=zadylynch@gmail.com" target="_blank" rel="noopener" onclick="event.stopPropagation()">Contact us for more information on how it looks</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Crochet -->
+    <div class="vp-panel" id="vpCrochet">
+      <div class="vp-coming-soon">
+        <p class="section-eyebrow">✦ Crochet</p>
+        <h2 class="vp-cs-title">Coming <em>Soon</em></h2>
+        <p class="vp-cs-sub">Our crochet collection is in the works. Effortless, protective styles with the luxury finish you expect from ZiiLuxeHair.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- Marble Feature / About -->
   <section class="marble-banner" id="our-story">
     <div class="marble-banner-bg"></div>
@@ -2334,6 +2803,7 @@
         <ul class="footer-links">
           <li><a href="#our-story">About Us</a></li>
           <li><a href="#deals" id="footerDealsLink">Deals</a></li>
+          <li><a href="#versatile" id="footerVersatileLink">Versatile Products</a></li>
         </ul>
       </div>
     </div>
@@ -2501,21 +2971,23 @@
       </div>
       <div class="pm-info">
         <span class="pm-eyebrow" id="pmEyebrow"></span>
+        <p class="pm-collection" id="pmCollection">Virgin Hair Collection</p>
         <h3 class="pm-name" id="pmName"></h3>
         <div class="pm-rating" id="pmRating"></div>
         <p class="pm-price placeholder" id="pmPrice">Select a size</p>
         <p class="pm-size-label">Select Length</p>
         <div class="pm-sizes" id="pmSizes">
-          <button class="pm-size" data-size='12"' data-price="125">12"</button>
-          <button class="pm-size" data-size='14"' data-price="135">14"</button>
-          <button class="pm-size" data-size='16"' data-price="155">16"</button>
-          <button class="pm-size" data-size='18"' data-price="175">18"</button>
-          <button class="pm-size" data-size='20"' data-price="185">20"</button>
-          <button class="pm-size" data-size='22"' data-price="195">22"</button>
-          <button class="pm-size" data-size='24"' data-price="205">24"</button>
-          <button class="pm-size" data-size='26"' data-price="215">26"</button>
-          <button class="pm-size" data-size='28"' data-price="225">28"</button>
-          <button class="pm-size" data-size='30"' data-price="235">30"</button>
+          <button class="pm-size" data-size='12"' data-price="145">12"</button>
+          <button class="pm-size" data-size='14"' data-price="155">14"</button>
+          <button class="pm-size" data-size='16"' data-price="175">16"</button>
+          <button class="pm-size" data-size='18"' data-price="195">18"</button>
+          <button class="pm-size" data-size='20"' data-price="205">20"</button>
+          <button class="pm-size" data-size='22"' data-price="215">22"</button>
+          <button class="pm-size" data-size='24"' data-price="225">24"</button>
+          <button class="pm-size" data-size='26"' data-price="235">26"</button>
+          <button class="pm-size" data-size='28"' data-price="245">28"</button>
+          <button class="pm-size" data-size='30"' data-price="255">30"</button>
+          <button class="pm-size" data-size='32"' data-price="235" hidden>32"</button>
         </div>
         <p class="pm-oos-tag" id="pmOosTag" hidden>Out of Stock</p>
         <p class="pm-size-label">Quantity</p>
@@ -2743,6 +3215,49 @@
       "Kinky Curly": false,
       "Water Wave": false
     };
+
+    /* Separate stock control for the Virgin Hair collection. Same mechanic as
+       above (true = in stock, false = out of stock → shows the "Out of Stock"
+       badge and Pre Order flow), managed independently from the main shop. */
+    const virginInventory = {
+      "Burmese Curly": true,
+      "Burmese Spiral Curly": true,
+      "Italian Curly": true,
+      "Body Wave": true,
+      "Straight Bundle": true,
+      "Kinky Curly": true,
+      "Loose Deep Curly": true,
+      "Water Wave": true
+    };
+
+    /* Stock control for the Wigs collection (Premium + Classic half wigs).
+       Same mechanic as above (true = in stock, false = out of stock → shows
+       the "Out of Stock" badge and Pre Order flow), managed independently. */
+    const wigInventory = {
+      "Burmese Curly Half Wig": true,
+      "Burmese Spiral Curly Half Wig": true,
+      "Body Wave Half Wig": true,
+      "U Part Wig": true,
+      "V Part Wig": true,
+      "Kinky Curly Half Wig": true,
+      "Water Wave Half Wig": true,
+      "Straight Half Wig": true,
+      "Loose Deep Wave Half Wig": true,
+      "Deep Curly Half Wig": true,
+      "Italian Curly Half Wig": true
+    };
+
+    /* Stock control for the Frontals & Closures collection. Same mechanic as
+       above (true = in stock, false = out of stock → shows the "Out of Stock"
+       badge and Pre Order flow), managed independently. */
+    const frontalInventory = {
+      "2x6 Closure": true,
+      "13x4 Frontal": true,
+      "13x6 Frontal": true,
+      "4x4 Closure": true,
+      "5x5 Closure": true,
+      "6x6 Closure": true
+    };
   </script>
 
   <script>
@@ -2753,6 +3268,7 @@
       const pmImg      = document.getElementById('pmImg');
       const pmImgWrap  = document.getElementById('pmImgWrap');
       const pmEyebrow  = document.getElementById('pmEyebrow');
+      const pmCollection = document.getElementById('pmCollection');
       const pmName     = document.getElementById('pmName');
       const pmPrice    = document.getElementById('pmPrice');
       const pmRating   = document.getElementById('pmRating');
@@ -2772,13 +3288,20 @@
       let selectedSize = null;   // { size: '18"', price: 175, oos: false }
       let quantity = 1;
 
-      /* Look up stock by product name. Falls back to a trailing-quote-stripped
-         key (e.g. 'Style 26"' -> 'Style 26') and defaults to
-         in-stock if the product isn't listed in the inventory object. */
-      function inStock(name) {
-        if (name in inventory) return inventory[name] !== false;
+      /* Look up stock by product name within the right collection's inventory.
+         Falls back to a trailing-quote-stripped key (e.g. 'Style 26"' ->
+         'Style 26') and defaults to in-stock if the product isn't listed. */
+      function invFor(collection) {
+        if (collection === 'Virgin Hair') return virginInventory;
+        if (collection === 'Wigs') return wigInventory;
+        if (collection === 'Frontals & Closures') return frontalInventory;
+        return inventory;
+      }
+      function inStock(name, collection) {
+        const inv = invFor(collection);
+        if (name in inv) return inv[name] !== false;
         const stripped = name.replace(/"+$/, '').trim();
-        if (stripped in inventory) return inventory[stripped] !== false;
+        if (stripped in inv) return inv[stripped] !== false;
         return true;
       }
 
@@ -2792,7 +3315,12 @@
           img:    img ? img.getAttribute('src') : '',
           alt:    img ? (img.getAttribute('alt') || '') : '',
           // Mirror the card image's fit so "contain" products show in full in the modal
-          fit:    img && img.style.objectFit === 'contain' ? 'contain' : 'cover'
+          fit:    img && img.style.objectFit === 'contain' ? 'contain' : 'cover',
+          // Which collection this card belongs to (drives stock + label)
+          collection: card.dataset.collection || 'Shop',
+          // Pricing tier — defaults to the collection, but lets one collection
+          // carry multiple tiers (e.g. Wigs → WigsPremium / WigsClassic)
+          pricing: card.dataset.pricing || card.dataset.collection || 'Shop'
         };
       }
 
@@ -2820,9 +3348,16 @@
          stays clickable — the per-size status simply drives which action button
          appears once a size is picked. A size is in stock when the product is in
          stock AND (it has no restriction list, or the list includes that size). */
-      function applyModalStock(name) {
-        const allowed = availableSizes[name];
-        const productInStock = inStock(name);
+      function availSizesFor(collection) {
+        if (collection === 'Virgin Hair') return virginAvailableSizes;
+        if (collection === 'Wigs') return wigAvailableSizes;
+        if (collection === 'Frontals & Closures') return frontalAvailableSizes;
+        return availableSizes;
+      }
+      function applyModalStock(name, collection) {
+        const sizeMap = availSizesFor(collection);
+        const allowed = sizeMap[name];
+        const productInStock = inStock(name, collection);
         sizeButtons.forEach(b => {
           const sizeOk = productInStock &&
             (!Array.isArray(allowed) || allowed.includes(b.dataset.size));
@@ -2857,11 +3392,76 @@
       const availableSizes = {
         'Burmese Curly': ['12"', '14"']
       };
+      /* Same idea, scoped to the Virgin Hair collection (managed separately). */
+      const virginAvailableSizes = {};
+      /* Same idea, scoped to the Wigs collection (managed separately). */
+      const wigAvailableSizes = {};
+      /* Same idea, scoped to the Frontals & Closures collection. */
+      const frontalAvailableSizes = {};
+
+      /* Inch pricing per collection. The Shop collection omits 32" (that button
+         stays hidden); Virgin Hair carries its own lower price tier plus 32". */
+      const collectionPricing = {
+        'Shop': {
+          '12"': 145, '14"': 155, '16"': 175, '18"': 195, '20"': 205,
+          '22"': 215, '24"': 225, '26"': 235, '28"': 245, '30"': 255
+        },
+        'Virgin Hair': {
+          '12"': 115, '14"': 125, '16"': 145, '18"': 165, '20"': 175, '22"': 185,
+          '24"': 195, '26"': 205, '28"': 215, '30"': 225, '32"': 235
+        },
+        // Wigs collection — two tiers selected per card via data-pricing
+        'WigsPremium': {
+          '12"': 255, '14"': 265, '16"': 285, '18"': 295, '20"': 305, '22"': 325,
+          '24"': 345, '26"': 365, '28"': 385, '30"': 395, '32"': 405
+        },
+        'WigsClassic': {
+          '12"': 145, '14"': 155, '16"': 175, '18"': 195, '20"': 205, '22"': 225,
+          '24"': 245, '26"': 265, '28"': 285, '30"': 305, '32"': 325
+        },
+        // Frontals & Closures — each product is its own tier (sizes 12"–22" only)
+        'Closure2x6': {
+          '12"': 145, '14"': 155, '16"': 175, '18"': 185, '20"': 195, '22"': 205
+        },
+        'Frontal13x4': {
+          '12"': 205, '14"': 225, '16"': 245, '18"': 265, '20"': 285, '22"': 305
+        },
+        'Frontal13x6': {
+          '12"': 255, '14"': 265, '16"': 285, '18"': 305, '20"': 335, '22"': 355
+        },
+        'Closure4x4': {
+          '12"': 125, '14"': 135, '16"': 155, '18"': 165, '20"': 185, '22"': 195
+        },
+        'Closure5x5': {
+          '12"': 165, '14"': 185, '16"': 215, '18"': 235, '20"': 255, '22"': 275
+        },
+        'Closure6x6': {
+          '12"': 195, '14"': 205, '16"': 225, '18"': 245, '20"': 265, '22"': 285
+        }
+      };
+
+      /* Apply the active pricing tier to the size buttons, showing only the
+         sizes that tier offers (e.g. hides 32" for the base Shop tier). */
+      function applyPricing(tier) {
+        const map = collectionPricing[tier] || collectionPricing['Shop'];
+        sizeButtons.forEach(b => {
+          const price = map[b.dataset.size];
+          if (price != null) { b.dataset.price = price; b.hidden = false; }
+          else { b.hidden = true; }
+        });
+      }
 
       function openModal(card) {
         currentProduct = readCard(card);
-        if (currentProduct.img) { pmImg.src = currentProduct.img; pmImg.alt = currentProduct.alt; }
-        else { pmImg.removeAttribute('src'); pmImg.alt = ''; }
+        // Image-less cards (e.g. text-based wig cards) hide the modal image panel
+        // so the info column fills the dialog cleanly instead of showing a blank box.
+        if (currentProduct.img) {
+          pmImg.src = currentProduct.img; pmImg.alt = currentProduct.alt;
+          pmImgWrap.style.display = '';
+        } else {
+          pmImg.removeAttribute('src'); pmImg.alt = '';
+          pmImgWrap.style.display = 'none';
+        }
         // Show the matching badge only for products that have one
         const badge = modalBadges[currentProduct.name];
         pmEyebrow.classList.remove('show', 'gold', 'dark');
@@ -2871,11 +3471,18 @@
         } else {
           pmEyebrow.textContent = '';
         }
+        // Surface the collection so the customer knows which line they're ordering
+        const labeledCollections = ['Virgin Hair', 'Wigs', 'Frontals & Closures'];
+        const showCollection = labeledCollections.includes(currentProduct.collection);
+        pmCollection.textContent = `${currentProduct.collection} Collection`;
+        pmCollection.classList.toggle('show', showCollection);
         pmName.textContent   = currentProduct.name;
         pmRating.textContent = currentProduct.rating;
+        pmRating.style.display = currentProduct.rating ? '' : 'none';
         pmImgWrap.classList.toggle('contain', currentProduct.fit === 'contain');
         resetSizes();
-        applyModalStock(currentProduct.name);
+        applyPricing(currentProduct.pricing);
+        applyModalStock(currentProduct.name, currentProduct.collection);
         modal.classList.add('open');
         document.body.style.overflow = 'hidden';
       }
@@ -2908,13 +3515,16 @@
         // Mark out-of-stock cards with a red badge (replacing any existing badge)
         const nameEl = card.querySelector('.product-name');
         const name = nameEl ? nameEl.textContent.trim() : '';
-        if (name && !inStock(name)) {
-          const imgWrap = card.querySelector('.product-img-wrap');
-          let badge = imgWrap.querySelector('.product-badge');
+        const cardCollection = card.dataset.collection || 'Shop';
+        if (name && !inStock(name, cardCollection)) {
+          // Image cards badge inside the image wrap; text cards (no wrap) badge
+          // on the card itself.
+          const badgeHost = card.querySelector('.product-img-wrap') || card;
+          let badge = badgeHost.querySelector('.product-badge');
           if (!badge) {
             badge = document.createElement('span');
             badge.className = 'product-badge';
-            imgWrap.insertBefore(badge, imgWrap.firstChild);
+            badgeHost.insertBefore(badge, badgeHost.firstChild);
           }
           badge.classList.remove('gold');
           badge.classList.add('oos');
@@ -2935,7 +3545,9 @@
       pmClose.addEventListener('click', closeModal);
       modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
       pmPreorder.addEventListener('click', () => {
-        const name = currentProduct ? currentProduct.name : '';
+        let name = currentProduct ? currentProduct.name : '';
+        const col = currentProduct ? currentProduct.collection : '';
+        if (col && col !== 'Shop') name = `${col} ${name}`;
         closeModal();
         openPreorder(name);
       });
@@ -2949,12 +3561,15 @@
           return;
         }
         if (!currentProduct) return;
+        const col = currentProduct.collection;
+        const displayName = (col && col !== 'Shop') ? `${col} ${currentProduct.name}` : currentProduct.name;
         addToCart({
-          name:  `${currentProduct.name} — ${selectedSize.size}`,
+          name:  `${displayName} — ${selectedSize.size}`,
           price: fmt(selectedSize.price),
           img:   currentProduct.img,
           alt:   currentProduct.alt,
-          qty:   quantity
+          qty:   quantity,
+          collection: currentProduct.collection
         });
         closeModal();
         openCart();
@@ -3090,6 +3705,37 @@
       }
       if (navDealsLink) navDealsLink.addEventListener('click', revealDeals);
       if (footerDealsLink) footerDealsLink.addEventListener('click', revealDeals);
+
+      /* ---- Versatile Products section ---- */
+      const versatile = document.getElementById('versatile');
+      const navVersatileLink = document.getElementById('navVersatileLink');
+      const footerVersatileLink = document.getElementById('footerVersatileLink');
+      function revealVersatile(e) {
+        if (e) e.preventDefault();
+        if (!versatile) return;
+        versatile.classList.add('open');
+        requestAnimationFrame(() => versatile.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+      }
+      if (navVersatileLink) navVersatileLink.addEventListener('click', revealVersatile);
+      if (footerVersatileLink) footerVersatileLink.addEventListener('click', revealVersatile);
+
+      /* Subsection tabs: Virgin Hair / Wigs / Frontals & Closures / Crochet */
+      const vpTabs = document.querySelectorAll('.vp-tab');
+      const vpPanels = document.querySelectorAll('.vp-panel');
+      vpTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          vpTabs.forEach(t => t.classList.remove('active'));
+          vpPanels.forEach(p => p.classList.remove('active'));
+          tab.classList.add('active');
+          const panel = document.getElementById(tab.dataset.panel);
+          if (panel) {
+            panel.classList.add('active');
+            // Panels start hidden, so their reveal elements never intersected the
+            // viewport — reveal them now that the panel is shown.
+            panel.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+          }
+        });
+      });
 
       const sameLengthDeals = [
         { size: '12"', price: 365 }, { size: '14"', price: 395 }, { size: '16"', price: 455 },
@@ -3276,6 +3922,189 @@
           if (customAddBtn.disabled || !selectedDeal || !styles.every(Boolean)) return;
           const lines = selectedDeal.sizes.map((s, i) => `Piece ${i + 1}: ${styles[i]} · ${s}"`);
           addToCart({ name: 'Custom 3 Piece Bundle', price: fmt(selectedDeal.price), qty: 1, lines });
+          openCart();
+        });
+      }
+
+      /* ---- Virgin Hair Deals (same mechanics as the main Deals, scoped to the
+         Virgin Hair collection; cart items carry "Virgin Hair" in name + data) ---- */
+      const virginSameLengthDeals = [
+        { size: '12"', price: 335 }, { size: '14"', price: 365 }, { size: '16"', price: 435 },
+        { size: '18"', price: 485 }, { size: '20"', price: 515 }, { size: '22"', price: 545 },
+        { size: '24"', price: 575 }, { size: '26"', price: 605 }, { size: '28"', price: 635 },
+        { size: '30"', price: 665 }, { size: '32"', price: 695 }
+      ];
+      const virginCustomDeals = [
+        { sizes: [12, 14, 16], price: 375 }, { sizes: [14, 16, 18], price: 425 },
+        { sizes: [16, 18, 20], price: 475 }, { sizes: [18, 20, 22], price: 515 },
+        { sizes: [20, 22, 24], price: 545 }, { sizes: [22, 24, 26], price: 575 },
+        { sizes: [24, 26, 28], price: 605 }, { sizes: [26, 28, 30], price: 635 },
+        { sizes: [28, 30, 32], price: 665 }
+      ];
+
+      /* Virgin 3 Bundle Deals: pick a same-length size, then one texture */
+      const virginSLGrid    = document.getElementById('virginSameLengthGrid');
+      const virginSLMsg     = document.getElementById('virginSameLengthMsg');
+      const virginSLAdd     = document.getElementById('virginSameLengthAdd');
+      const virginSLPanel   = document.getElementById('virginSameLengthStylePanel');
+      const virginSLPiece   = document.getElementById('virginSameLengthPiece');
+      const virginSLOptions = document.getElementById('virginSameLengthStyleOptions');
+
+      if (virginSLGrid && virginSLAdd && virginSLPanel && virginSLOptions) {
+        virginSLGrid.innerHTML = virginSameLengthDeals.map((d, i) => `
+          <div class="deal-card" data-index="${i}">
+            <div class="deal-qty">3 × Bundles</div>
+            <div class="deal-size">${d.size}</div>
+            <div class="deal-price">${fmt(d.price)}</div>
+          </div>`).join('');
+
+        let vslDeal = null;
+        let vslTexture = null;
+
+        virginSLOptions.innerHTML = bundleTextures.map(t =>
+          `<button type="button" class="style-btn" data-texture="${t}">${t}</button>`
+        ).join('');
+
+        function updateVirginSL() {
+          virginSLAdd.disabled = !(vslDeal && vslTexture);
+          if (vslDeal && !vslTexture) {
+            virginSLMsg.textContent = 'Now choose your texture';
+            virginSLMsg.classList.add('show');
+          } else {
+            virginSLMsg.classList.remove('show');
+          }
+        }
+
+        virginSLGrid.addEventListener('click', e => {
+          const card = e.target.closest('.deal-card');
+          if (!card) return;
+          virginSLGrid.querySelectorAll('.deal-card').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          vslDeal = virginSameLengthDeals[parseInt(card.dataset.index, 10)];
+          virginSLPanel.hidden = false;
+          virginSLPanel.classList.remove('open');
+          void virginSLPanel.offsetWidth;
+          virginSLPanel.classList.add('open');
+          updateVirginSL();
+        });
+
+        virginSLOptions.addEventListener('click', e => {
+          const btn = e.target.closest('.style-btn');
+          if (!btn) return;
+          virginSLOptions.querySelectorAll('.style-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          vslTexture = btn.dataset.texture;
+          virginSLPiece.classList.add('filled');
+          updateVirginSL();
+        });
+
+        virginSLAdd.addEventListener('click', () => {
+          if (!vslDeal || !vslTexture) return;
+          addToCart({
+            name: `Virgin Hair 3× ${vslDeal.size} ${vslTexture} Bundle Deal`,
+            price: fmt(vslDeal.price), qty: 1, collection: 'Virgin Hair'
+          });
+          openCart();
+        });
+      }
+
+      /* Virgin Custom 3 Bundle Deals: combo cards + per-piece texture builder */
+      const virginCustomGrid     = document.getElementById('virginCustomGrid');
+      const virginStylePanel     = document.getElementById('virginBundleStylePanel');
+      const virginPiecesEl       = document.getElementById('virginBundlePieces');
+      const virginSummaryList    = document.getElementById('virginBundleSummaryList');
+      const virginBundleTotalEl  = document.getElementById('virginBundleTotal');
+      const virginBundleHintEl   = document.getElementById('virginBundleHint');
+      const virginCustomAddBtn   = document.getElementById('virginCustomAdd');
+
+      if (virginCustomGrid && virginStylePanel && virginCustomAddBtn) {
+        virginCustomGrid.innerHTML = virginCustomDeals.map((d, i) => `
+          <div class="deal-card" data-index="${i}">
+            <div class="deal-qty">Custom 3-Piece</div>
+            <div class="deal-combo">${comboLabel(d.sizes)}</div>
+            <div class="deal-price">${fmt(d.price)}</div>
+          </div>`).join('');
+
+        let vSelectedDeal = null;
+        let vStyles = [null, null, null];
+
+        function renderVirginSummary() {
+          if (!vSelectedDeal) return;
+          virginSummaryList.innerHTML = vSelectedDeal.sizes.map((s, i) => {
+            const chosen = vStyles[i];
+            const val = chosen ? `${chosen} · ${s}"` : 'Choose a texture';
+            return `<li><span class="bs-label">Piece ${i + 1} (${s}")</span>` +
+                   `<span class="bs-value ${chosen ? 'set' : ''}">${val}</span></li>`;
+          }).join('');
+          virginBundleTotalEl.textContent = fmt(vSelectedDeal.price);
+
+          virginPiecesEl.querySelectorAll('.bundle-piece').forEach((el, i) => {
+            el.classList.toggle('filled', !!vStyles[i]);
+          });
+
+          const allChosen = vStyles.every(Boolean);
+          virginCustomAddBtn.disabled = !allChosen;
+          if (allChosen) {
+            virginBundleHintEl.textContent = 'Your bundle is ready ✦';
+            virginBundleHintEl.classList.add('ready');
+          } else {
+            virginBundleHintEl.textContent = 'Choose a texture for each of your 3 pieces.';
+            virginBundleHintEl.classList.remove('ready');
+          }
+        }
+
+        function selectVirginDeal(deal, card) {
+          vSelectedDeal = deal;
+          vStyles = [null, null, null];
+
+          virginPiecesEl.innerHTML = deal.sizes.map((s, i) => `
+            <div class="bundle-piece" data-piece="${i}">
+              <div class="bundle-piece-head">Piece ${i + 1} (${s}")</div>
+              <div class="style-options">
+                ${bundleTextures.map(t =>
+                  `<button type="button" class="style-btn" data-piece="${i}" data-texture="${t}">${t}</button>`
+                ).join('')}
+              </div>
+            </div>`).join('');
+
+          virginBundleTotalEl.classList.remove('pop');
+          void virginBundleTotalEl.offsetWidth;
+          virginBundleTotalEl.classList.add('pop');
+          renderVirginSummary();
+
+          card.after(virginStylePanel);
+          virginStylePanel.hidden = false;
+          virginStylePanel.classList.remove('open');
+          void virginStylePanel.offsetWidth;
+          virginStylePanel.classList.add('open');
+        }
+
+        virginCustomGrid.addEventListener('click', e => {
+          const card = e.target.closest('.deal-card');
+          if (!card) return;
+          virginCustomGrid.querySelectorAll('.deal-card').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          selectVirginDeal(virginCustomDeals[parseInt(card.dataset.index, 10)], card);
+        });
+
+        virginPiecesEl.addEventListener('click', e => {
+          const btn = e.target.closest('.style-btn');
+          if (!btn) return;
+          const i = parseInt(btn.dataset.piece, 10);
+          vStyles[i] = btn.dataset.texture;
+          btn.parentElement.querySelectorAll('.style-btn')
+            .forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          renderVirginSummary();
+        });
+
+        virginCustomAddBtn.addEventListener('click', () => {
+          if (virginCustomAddBtn.disabled || !vSelectedDeal || !vStyles.every(Boolean)) return;
+          const lines = vSelectedDeal.sizes.map((s, i) => `Piece ${i + 1}: ${vStyles[i]} · ${s}"`);
+          addToCart({
+            name: 'Virgin Hair Custom 3 Piece Bundle',
+            price: fmt(vSelectedDeal.price), qty: 1, lines, collection: 'Virgin Hair'
+          });
           openCart();
         });
       }
